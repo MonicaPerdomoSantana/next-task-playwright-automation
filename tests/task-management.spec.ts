@@ -1,12 +1,14 @@
 import { test, expect } from "@playwright/test";
 
-test.beforeEach(async ({ page}) => {
-  await page.goto("https://solara-next-task.netlify.app/");
+const BASE_URL = "https://solara-next-task.netlify.app/";
+
+test.beforeEach(async ({ page }) => {
+  await page.goto(BASE_URL);
 });
 
 test.describe("Task creation", () => {
   test.beforeEach(async ({ page }) => {
-    await page.getByRole("button", { name: "Add Task" }).click({ force: true })
+    await page.getByRole("button", { name: "Add Task" }).click({ force: true });
   });
 
   test("TC01-Create task with all valid fields", async ({ page }) => {
