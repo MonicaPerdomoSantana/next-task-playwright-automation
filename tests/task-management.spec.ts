@@ -24,7 +24,8 @@ test.describe("Task creation", () => {
     await page.getByRole("button", { name: "Select color - #7ACCFA" }).click();
     await page.getByRole("button", { name: "Create Task" }).click();
 
-    await expect(page.getByRole("heading", { name: "Buy milk" })).toBeVisible();
+    const taskTitle = page.getByRole("heading", { name: "Buy milk" });
+    await expect(taskTitle).toBeVisible();
   });
 
   test("TC02-Create task with only required fields", async ({ page }) => {
