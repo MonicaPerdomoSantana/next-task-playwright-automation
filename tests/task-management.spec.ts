@@ -103,6 +103,7 @@ test.describe("Task edition", () => {
     const div = page.locator('[data-testid="task-container"]');
     await expect(div).toHaveCSS("background-color", "rgb(58, 232, 54)");
   });
+
   test("TC07-Attempt to save with empty name", async ({ page }) => {
     await page.getByRole("button", { name: "Task Menu" }).click();
     await page.getByRole("menuitem", { name: "Edit" }).click();
@@ -111,6 +112,7 @@ test.describe("Task edition", () => {
     const saveButton = page.locator("button", { hasText: "Save" });
     await expect(saveButton).toBeDisabled();
   });
+
   test("TC08-Attempt to save by pressing Enter Key", async ({ page }) => {
     await page.getByRole("button", { name: "Task Menu" }).click();
     await page.getByRole("menuitem", { name: "Edit" }).click();
@@ -122,6 +124,7 @@ test.describe("Task edition", () => {
     ).not.toBeVisible();
   });
 });
+
 test.describe("Task completion", () => {
   test.beforeEach(async ({ page }) => {
     await page.getByRole("button", { name: "Add Task" }).click({ force: true });
@@ -137,11 +140,57 @@ test.describe("Task completion", () => {
     await page.getByRole("button", { name: "Select color - #7ACCFA" }).click();
     await page.getByRole("button", { name: "Create Task" }).click();
   });
+
   test("TC09-Mark task as done", async ({ page }) => {
     await page.getByRole("button", { name: "Task Menu" }).click();
     await page.getByRole("menuitem", { name: "Mark as done" }).click();
 
     const taskName = page.getByRole("heading", { name: "Buy milk" });
     await expect(taskName).toHaveCSS("text-decoration", /line-through/);
+  });
+
+  test("TC10-Unmark completed task (mark as not done)", async ({ page }) => {
+    await page.getByRole("button", { name: "Task Menu" }).click();
+    await page.getByRole("menuitem", { name: "Mark as done" }).click();
+    await page.getByRole("button", { name: "Task Menu" }).click();
+    await page.getByRole("menuitem", { name: "Mark as not done" }).click();
+
+    const taskName = page.getByRole("heading", { name: "Buy milk" });
+    await expect(taskName).not.toHaveCSS("text-decoration", /line-through/);
+  });
+});
+
+test.describe("Task deletion", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.getByRole("button", { name: "Add Task" }).click({ force: true });
+    await page.getByRole("textbox", { name: "Task Name" }).fill("Buy milk");
+    await page.getByRole("textbox", { name: "Description" }).fill("2 liters");
+    await page
+      .getByRole("textbox", { name: "Task Deadline" })
+      .fill("2025-08-01T12:00");
+    await page.getByRole("combobox").click();
+    await page.getByRole("img", { name: "office" }).click();
+    await page.keyboard.press("Escape");
+    await page.locator("button", { hasText: "Color" }).click();
+    await page.getByRole("button", { name: "Select color - #7ACCFA" }).click();
+    await page.getByRole("button", { name: "Create Task" }).click();
+  });
+
+  test("TC11-Delete task with confirmation)", async ({ page }) => {
+    await page.getByRole("button", { name: "Task Menu" }).click();
+    await page.getByRole("menuitem", { name: "Delete" }).click();
+    await page.getByRole("button", { name: "Confirm Delete" }).click();
+
+    const taskTitle = page.getByRole("heading", { name: "Buy milk" });
+    await expect(taskTitle).not.toBeVisible();
+  });
+  
+  test("TC12-Cancel deletion in confirmation dialog", async ({ page }) => {
+    await page.getByRole("button", { name: "Task Menu" }).click();
+    await page.getByRole("menuitem", { name: "Delete" }).click();
+    await page.getByRole("button", { name: "Cancel" }).click();
+
+    const taskTitle = page.getByRole("heading", { name: "Buy milk" });
+    await expect(taskTitle).toBeVisible();
   });
 });
