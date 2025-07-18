@@ -17,6 +17,7 @@ test.describe("Task creation", () => {
   test("TC01-Create task with all valid fields", async ({ page }) => {
     taskCreationPage.createTask("Buy Milk","2 liters");
 
+    
     const taskTitle = page.getByRole("heading", { name: "Buy milk" });
     await expect(taskTitle).toBeVisible();
   });
