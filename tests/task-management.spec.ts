@@ -15,15 +15,20 @@ test.describe("Task creation", () => {
   });
 
   test("TC01-Create task with all valid fields", async ({ page }) => {
-    taskCreationPage.createTask("Buy Milk","2 liters");
+    taskCreationPage.createTask(
+      "Buy Milk",
+      "2 liters",
+      "2025-08-01T12:00",
+      "office",
+      "#7ACCFA"
+    );
 
-    
     const taskTitle = page.getByRole("heading", { name: "Buy milk" });
     await expect(taskTitle).toBeVisible();
   });
 
   test("TC02-Create task with only required fields", async ({ page }) => {
-    taskCreationPage.createTask("Call Mom","");
+    taskCreationPage.createTask("Call Mom");
 
     await expect(page.getByRole("heading", { name: "Call Mom" })).toBeVisible();
   });
