@@ -34,17 +34,13 @@ test.describe("Task creation", () => {
   });
 
   test("TC03-Attempt create with empty name", async ({ page }) => {
-    await page.getByRole("textbox", { name: "Task Name" }).fill("");
-    await page.getByRole("button", { name: "Create Task" }).click();
+    taskCreationPage.createTask("");
 
     await expect(page.getByText("Task Name is required")).toBeVisible();
   });
 
   test("TC04-Create task with special characters in name", async ({ page }) => {
-    await page
-      .getByRole("textbox", { name: "Task Name" })
-      .fill("Fix bug#123!@Home");
-    await page.getByRole("button", { name: "Create Task" }).click();
+    taskCreationPage.createTask("Fix bug#123!@Home");
 
     await expect(
       page.getByRole("heading", { name: "Fix bug#123!@Home" })
@@ -63,18 +59,13 @@ test.describe("Task creation", () => {
 
 test.describe("Task edition", () => {
   test.beforeEach(async ({ page }) => {
-    await page.getByRole("button", { name: "Add Task" }).click({ force: true });
-    await page.getByRole("textbox", { name: "Task Name" }).fill("Buy milk");
-    await page.getByRole("textbox", { name: "Description" }).fill("2 liters");
-    await page
-      .getByRole("textbox", { name: "Task Deadline" })
-      .fill("2025-08-01T12:00");
-    await page.getByRole("combobox").click();
-    await page.getByRole("img", { name: "office" }).click();
-    await page.keyboard.press("Escape");
-    await page.locator("button", { hasText: "Color" }).click();
-    await page.getByRole("button", { name: "Select color - #7ACCFA" }).click();
-    await page.getByRole("button", { name: "Create Task" }).click();
+    taskCreationPage.createTask(
+      "Buy Milk",
+      "2 liters",
+      "2025-08-01T12:00",
+      "office",
+      "#7ACCFA"
+    );
   });
 
   test("TC06-Edit all fields with valid data", async ({ page }) => {
@@ -125,18 +116,13 @@ test.describe("Task edition", () => {
 
 test.describe("Task completion", () => {
   test.beforeEach(async ({ page }) => {
-    await page.getByRole("button", { name: "Add Task" }).click({ force: true });
-    await page.getByRole("textbox", { name: "Task Name" }).fill("Buy milk");
-    await page.getByRole("textbox", { name: "Description" }).fill("2 liters");
-    await page
-      .getByRole("textbox", { name: "Task Deadline" })
-      .fill("2025-08-01T12:00");
-    await page.getByRole("combobox").click();
-    await page.getByRole("img", { name: "office" }).click();
-    await page.keyboard.press("Escape");
-    await page.locator("button", { hasText: "Color" }).click();
-    await page.getByRole("button", { name: "Select color - #7ACCFA" }).click();
-    await page.getByRole("button", { name: "Create Task" }).click();
+    taskCreationPage.createTask(
+      "Buy Milk",
+      "2 liters",
+      "2025-08-01T12:00",
+      "office",
+      "#7ACCFA"
+    );
   });
 
   test("TC09-Mark task as done", async ({ page }) => {
@@ -160,18 +146,13 @@ test.describe("Task completion", () => {
 
 test.describe("Task deletion", () => {
   test.beforeEach(async ({ page }) => {
-    await page.getByRole("button", { name: "Add Task" }).click({ force: true });
-    await page.getByRole("textbox", { name: "Task Name" }).fill("Buy milk");
-    await page.getByRole("textbox", { name: "Description" }).fill("2 liters");
-    await page
-      .getByRole("textbox", { name: "Task Deadline" })
-      .fill("2025-08-01T12:00");
-    await page.getByRole("combobox").click();
-    await page.getByRole("img", { name: "office" }).click();
-    await page.keyboard.press("Escape");
-    await page.locator("button", { hasText: "Color" }).click();
-    await page.getByRole("button", { name: "Select color - #7ACCFA" }).click();
-    await page.getByRole("button", { name: "Create Task" }).click();
+    taskCreationPage.createTask(
+      "Buy Milk",
+      "2 liters",
+      "2025-08-01T12:00",
+      "office",
+      "#7ACCFA"
+    );
   });
 
   test("TC11-Delete task with confirmation)", async ({ page }) => {
