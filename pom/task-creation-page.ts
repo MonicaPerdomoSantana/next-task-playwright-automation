@@ -7,6 +7,10 @@ export class TaskCreationPage {
     this.page = page;
   }
 
+  async goToCreateTask(){
+    await this.page.getByRole("button", { name: "Add Task" }).click({ force: true });
+  }
+
   async createTask(
     taskName: string,
     taskDescription: string = "",
