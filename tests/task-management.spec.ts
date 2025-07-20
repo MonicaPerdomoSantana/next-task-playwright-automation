@@ -1,44 +1,43 @@
 import { test, expect } from "@playwright/test";
 import { TaskCreationPage } from "../pom/task-creation-page";
 import { TaskEditionPage } from "../pom/task-edition-page";
+import { PageManager } from "../pom/page-manager";
 
 const BASE_URL = "https://solara-next-task.netlify.app/";
-let taskCreationPage: TaskCreationPage;
-let taskEditionPage: TaskEditionPage;
+let pm: PageManager;
 
 test.beforeEach(async ({ page }) => {
     await page.route("**//*.github.com/**", (route) => route.abort());
-    taskCreationPage = new TaskCreationPage(page);
-    taskEditionPage = new TaskEditionPage(page);
+    pm = new PageManager(page);
     await page.goto(BASE_URL);
 });
 
 test.describe("Task creation", () => {
     test.beforeEach(async ({ page }) => {
-        await taskCreationPage.goToCreateTask();
+        await pm.taskCreation.goToCreateTask();
     });
 
     test("TC01-Create task with all valid fields", async ({ page }) => {
-        await taskCreationPage.createTask("Buy Milk", "2 liters", "2025-08-01T12:00", "office", "#7ACCFA");
+        await pm.taskCreation.createTask("Buy Milk", "2 liters", "2025-08-01T12:00", "office", "#7ACCFA");
 
         const taskTitle = page.getByRole("heading", { name: "Buy milk" });
         await expect(taskTitle).toBeVisible();
     });
 
     test("TC02-Create task with only required fields", async ({ page }) => {
-        await taskCreationPage.createTask("Call Mom");
+        await pm.taskCreation.createTask("Call Mom");
 
         await expect(page.getByRole("heading", { name: "Call Mom" })).toBeVisible();
     });
 
     test("TC03-Attempt create with empty name", async ({ page }) => {
-        await taskCreationPage.createTask("");
+        await pm.taskCreation.createTask("");
 
         await expect(page.getByText("Task Name is required")).toBeVisible();
     });
 
     test("TC04-Create task with special characters in name", async ({ page }) => {
-        await taskCreationPage.createTask("Fix bug#123!@Home");
+        await pm.taskCreation.createTask("Fix bug#123!@Home");
 
         await expect(page.getByRole("heading", { name: "Fix bug#123!@Home" })).toBeVisible();
     });
@@ -53,13 +52,13 @@ test.describe("Task creation", () => {
 
 test.describe("Task edition", () => {
     test.beforeEach(async ({ page }) => {
-        await taskCreationPage.goToCreateTask();
-        await taskCreationPage.createTask("Buy Milk", "2 liters", "2025-08-01T12:00", "office", "#7ACCFA");
-        await taskEditionPage.goToTaskEdition();
+        await pm.taskCreation.goToCreateTask();
+        await pm.taskCreation.createTask("Buy Milk", "2 liters", "2025-08-01T12:00", "office", "#7ACCFA");
+        await pm.taskEdition.goToTaskEdition();
     });
 
     test("TC06-Edit all fields with valid data", async ({ page }) => {
-        await taskEditionPage.editTask(
+        await pm.taskEdition.editTask(
             true,
             "Buy bread",
             "Whole grain loaf",
@@ -77,14 +76,14 @@ test.describe("Task edition", () => {
     });
 
     test("TC07-Attempt to save with empty name", async ({ page }) => {
-        await taskEditionPage.editTask(false, "");
+        await pm.taskEdition.editTask(false, "");
 
         const saveButton = page.locator("button", { hasText: "Save" });
         await expect(saveButton).toBeDisabled();
     });
 
     test("TC08-Attempt to save by pressing Enter Key", async ({ page }) => {
-        await taskEditionPage.editTask(false, "Buy bread");
+        await pm.taskEdition.editTask(false, "Buy bread");
 
         await page.keyboard.press("Enter");
 
@@ -94,8 +93,8 @@ test.describe("Task edition", () => {
 
 test.describe("Task completion", () => {
     test.beforeEach(async ({ page }) => {
-        await taskCreationPage.goToCreateTask();
-        await taskCreationPage.createTask("Buy Milk", "2 liters", "2025-08-01T12:00", "office", "#7ACCFA");
+        await pm.taskCreation.goToCreateTask();
+        await pm.taskCreation.createTask("Buy Milk", "2 liters", "2025-08-01T12:00", "office", "#7ACCFA");
     });
 
     test("TC09-Mark task as done", async ({ page }) => {
@@ -119,8 +118,8 @@ test.describe("Task completion", () => {
 
 test.describe("Task deletion", () => {
     test.beforeEach(async ({ page }) => {
-        await taskCreationPage.goToCreateTask();
-        await taskCreationPage.createTask("Buy Milk", "2 liters", "2025-08-01T12:00", "office", "#7ACCFA");
+        await pm.taskCreation.goToCreateTask();
+        await pm.taskCreation.createTask("Buy Milk", "2 liters", "2025-08-01T12:00", "office", "#7ACCFA");
     });
 
     test("TC11-Delete task with confirmation)", async ({ page }) => {
