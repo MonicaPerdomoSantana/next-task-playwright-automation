@@ -5,6 +5,7 @@ const BASE_URL = "https://solara-next-task.netlify.app/";
 let taskCreationPage: TaskCreationPage;
 
 test.beforeEach(async ({ page }) => {
+  await page.route("**//*.github.com/**", (route) => route.abort());
   taskCreationPage = new TaskCreationPage(page);
   await page.goto(BASE_URL);
 });
